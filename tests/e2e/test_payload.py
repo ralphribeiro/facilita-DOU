@@ -22,5 +22,7 @@ def test_payload_raise_exception_with_not_valid_dirpath():
     num_do = 'DO3'
     path = 'invalid-path'
     url = get_uri(today, num_do)
-    with pytest.raises(GetPayloadError, match='Diretório inválido.') as e:
+    with pytest.raises(GetPayloadError, match='Diretório inválido.'):
         get_payload(path, url, AUTH)
+
+

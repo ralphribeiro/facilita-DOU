@@ -2,7 +2,7 @@ from io import UnsupportedOperation
 from logging import ERROR, INFO, Logger
 from os.path import exists
 from shutil import copyfileobj
-# from zipfile import is_zipfile,
+from zipfile import ZipFile
 
 from requests import Session
 from requests.models import HTTPError
@@ -31,7 +31,7 @@ def get_payload(path: str, url: str, auth):
             res = s.post(auth[0], data=auth[1])
             res.raise_for_status()
             if res.url.split('/')[-1] == 'index.php?p=':
-                logger.log(INFO, f'{auth[0]} logado com sucesso.')
+                logger.log(INFO, '%s logado com sucesso.', auth[0])
                 with s.get(url, stream=True) as res:
                     res.raise_for_status()
                     with open(path, 'wb') as f:
@@ -44,4 +44,8 @@ def get_payload(path: str, url: str, auth):
             logger.log(ERROR, e.strerror)
             raise GetPayloadError('Erro no manipulador de arquivo.')
 
-# def unpack(path: str):
+
+def unpack_payload(path: str):
+    with ZipFile(path, 'r') as p:
+        logger.log(INFO, 'descompactando %s', path)
+        return p.extractall(path.removesuffix(path.split('/')[-1]))
