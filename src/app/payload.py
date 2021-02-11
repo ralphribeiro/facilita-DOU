@@ -1,5 +1,5 @@
 from io import UnsupportedOperation
-from logging import ERROR, Logger
+from logging import ERROR, INFO, Logger
 from os.path import exists
 from shutil import copyfileobj
 # from zipfile import is_zipfile,
@@ -18,29 +18,30 @@ class GetPayloadError(Exception):
 def path_exists(path: str) -> bool:
     suffix = path.split('/')[-1]
     return suffix.endswith('.zip') and exists(path.removesuffix(suffix))
-    
 
 
 def get_payload(path: str, url: str, auth):
     if not path_exists(path):
-        raise GetPayloadError('Diretório inválido')
+        err = 'Diretório inválido.'
+        logger.log(ERROR, err)
+        raise GetPayloadError(err)
 
     with Session() as s:
-        try: 
+        try:
             res = s.post(auth[0], data=auth[1])
             res.raise_for_status()
-            if res.status_code in (200, 201):
+            if res.url.split('/')[-1] == 'index.php?p=':
+                logger.log(INFO, f'{auth[0]} logado com sucesso.')
                 with s.get(url, stream=True) as res:
                     res.raise_for_status()
                     with open(path, 'wb') as f:
-                        return res.status_code, copyfileobj(res.raw, f)
-            else:
-                return res.status_code, None
+                        copyfileobj(res.raw, f)
+                        return path
         except HTTPError as e:
             logger.log(ERROR, e.strerror)
-            raise GetPayloadError('Erro HTTP')
+            raise GetPayloadError('Erro HTTP.')
         except (BlockingIOError, UnsupportedOperation) as e:
             logger.log(ERROR, e.strerror)
-            raise GetPayloadError('Erro no manipulador de arquivo')
+            raise GetPayloadError('Erro no manipulador de arquivo.')
 
 # def unpack(path: str):

@@ -1,7 +1,12 @@
+from configparser import ConfigParser
 
-EMAIL = ''
-PASSWORD = ''
 
+cfg = ConfigParser()
+cfg.read('config.ini')
+cfg.get('auth', 'EMAIL')
+
+EMAIL = cfg.get('auth', 'EMAIL')
+PASSWORD = cfg.get('auth', 'PASSWORD')
 
 AUTH = (
     'https://inlabs.in.gov.br/logar.php',
