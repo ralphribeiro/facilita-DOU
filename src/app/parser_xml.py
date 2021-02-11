@@ -1,18 +1,14 @@
-import asyncio
 from logging import INFO, Logger
-from os.path import dirname, abspath, join
 from xml.etree.ElementTree import XMLPullParser
 from xml.etree import ElementTree
-
-from aiofiles import open as aopen
 
 
 logger = Logger(__file__)
 
 
-async def get_bytes_payload(path: str):
-    async with aopen(path, 'rb') as bytes_:
-        return await bytes_.read()
+def get_bytes_payload(path: str):
+    with open(path, 'rb') as bytes_:
+        return bytes_.read()
 
 
 def parse_and_remove(xml: bytes, path: str) -> ElementTree.Element:
@@ -39,11 +35,11 @@ def parse_and_remove(xml: bytes, path: str) -> ElementTree.Element:
                 pass
 
 
-async def find_in_xml(filepath: str, xmlpath: str):
+def find_in_xml(filepath: str, xmlpath: str):
     logger.log(INFO, 'Procurando em %s', filepath.split('/')[-1])
-    bin_data = await get_bytes_payload(filepath)
+    bin_data = get_bytes_payload(filepath)
     data = parse_and_remove(bin_data, xmlpath)
-    return data
+    return next(data)
 
 # path_ = join(dirname(abspath(__name__)),
 #              '2021-02-05-DO3',
