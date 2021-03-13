@@ -6,7 +6,7 @@ import tempfile
 
 from app.config import AUTH, get_uri
 from app.payload import get_payload, unpack_payload
-from app.parser_xml import find_in_xml
+from app.parser_xml import parse_xml
 
 import xml.etree.ElementTree as elem
 
@@ -23,20 +23,20 @@ def prepare_files(dir_path):
     unpack_payload(path)
 
 
-def get_xmlpath():
-    return 'article/body/Texto'
-
-
 def main():
     td = tempfile.TemporaryDirectory(prefix='facdou', suffix=today)
-    xmlpath = get_xmlpath()
+    pattern = 'saúde'
     prepare_files(td.name)
     xmls = listdir(td.name)
+    items = []
     for xml in xmls:
         if xml.endswith('.xml'):
-            resp: elem.Element = find_in_xml(join(td.name, xml), xmlpath)
-            a = 1
-            # print(resp.text)p 
+            item = parse_xml(join(td.name, xml), pattern)
+            if item:
+                items.append(item)
+
+
+    print(len(items))
 
 
 if __name__ == "__main__":
