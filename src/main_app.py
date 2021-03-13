@@ -1,12 +1,16 @@
 from datetime import date
+import logging
 from os.path import join
 from os import listdir
 import tempfile
 
-from src.app.config import AUTH, get_uri
-from src.app.payload import get_payload, unpack_payload
-from src.app.parser_xml import find_in_xml
+from app.config import AUTH, get_uri
+from app.payload import get_payload, unpack_payload
+from app.parser_xml import find_in_xml
 
+import xml.etree.ElementTree as elem
+
+logging.getLogger().setLevel(logging.INFO)
 
 today = date.today().isoformat()
 
@@ -19,15 +23,21 @@ def prepare_files(dir_path):
     unpack_payload(path)
 
 
+def get_xmlpath():
+    return 'article/body/Texto'
+
+
 def main():
-    td = tempfile.TemporaryDirectory(suffix=today)
-    xmlpath = 'article/body/Identifica'
-    try:
-        prepare_files(td.name)
-        xmls = listdir(td.name)
-        for xml in xmls:
-            if xml.endswith('.xml'):
-                resp = find_in_xml(join(td.name, xml), xmlpath)
-                print(resp.text)
-    finally:
-        td.cleanup()
+    td = tempfile.TemporaryDirectory(prefix='facdou', suffix=today)
+    xmlpath = get_xmlpath()
+    prepare_files(td.name)
+    xmls = listdir(td.name)
+    for xml in xmls:
+        if xml.endswith('.xml'):
+            resp: elem.Element = find_in_xml(join(td.name, xml), xmlpath)
+            a = 1
+            # print(resp.text)p 
+
+
+if __name__ == "__main__":
+    main()
