@@ -8,11 +8,11 @@ from requests import Session
 from requests.models import HTTPError
 
 
-class GetPayloadError(Exception):
+class GetPayloadError(BaseException):
     ...
 
 
-class UnzipFileError(Exception):
+class UnzipFileError(BaseException):
     ...
 
 
