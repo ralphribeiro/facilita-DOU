@@ -1,0 +1,26 @@
+@startuml
+
+main_app -> main_app.main
+main_app.main --> main_app.prepare_files: path
+main_app.prepare_files -> payload: path, url, auth
+payload --> payload.get_payload:
+payload.get_payload --> payload.get_payload: autentica
+payload.get_payload --> payload.get_payload: download
+payload.get_payload --> payload
+payload -> main_app.prepare_files
+main_app.prepare_files -> payload: path
+payload --> payload.unpack_payload
+payload.unpack_payload --> payload
+payload -> main_app.prepare_files
+main_app.prepare_files -> main_app.main
+main_app.main -> parser_xml: path, pattern
+parser_xml --> parser_xml.parse_xml
+parser_xml.parse_xml --> parser_xml.parse_xml: remove_tags
+parser_xml.parse_xml --> parser_xml
+parser_xml -> main_app.main: dataclass
+
+' main_app -> main_app.main: padrao
+
+
+
+@enduml

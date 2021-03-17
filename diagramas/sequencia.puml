@@ -1,0 +1,16 @@
+@startuml
+
+robo --> main: gatilho
+main -> retorna_padrao: padrao
+retorna_padrao -> manipulaAPI: inicia
+manipulaAPI --> manipulaAPI: login
+manipulaAPI --> manipula_binario: download
+manipula_binario --> manipula_binario: persiste
+manipula_binario --> manipula_binario: descompacta
+manipula_binario --> retorna_padrao:
+retorna_padrao -> manipula_binario: obtem_dados
+manipula_binario --> retorna_padrao: abre
+retorna_padrao --> retorna_padrao: obtem_padrao
+retorna_padrao -> main: dados
+
+@enduml

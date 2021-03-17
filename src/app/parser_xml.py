@@ -21,7 +21,7 @@ def remove_tags(text):
     return TAG_RE.sub('', text)
 
 
-def parse_xml(xml_file_path: str, pattern: str):
+def parse_xml(xml_file_path: str, pattern: tuple):
     logging.info('Procurando em %s', xml_file_path.split('/')[-1])
     doc = parse(xml_file_path)
     root = doc.getroot()
@@ -33,6 +33,11 @@ def parse_xml(xml_file_path: str, pattern: str):
     child3 = child2.find('Identifica')
     identifica = child3.text
 
+    if not identifica or not re.findall(
+        pattern[0], identifica, flags=re.IGNORECASE
+    ):
+        return None
+
     child3 = child2.find('Data')
     data = child3.text
 
@@ -42,6 +47,5 @@ def parse_xml(xml_file_path: str, pattern: str):
     texto = remove_tags(texto)
 
     item = ItemXml(url, identifica, data, texto)
-    r = re.findall(pattern, item.texto, flags=re.IGNORECASE)
+    r = re.findall(pattern[1], item.texto, flags=re.IGNORECASE)
     return item if len(r) > 0 else None
-        

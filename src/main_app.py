@@ -25,7 +25,7 @@ def prepare_files(dir_path):
 
 def main():
     td = tempfile.TemporaryDirectory(prefix='facdou', suffix=today)
-    pattern = 'saúde'
+    pattern = ('licitação', 'saúde')
     prepare_files(td.name)
     xmls = listdir(td.name)
     items = []
@@ -34,8 +34,6 @@ def main():
             item = parse_xml(join(td.name, xml), pattern)
             if item:
                 items.append(item)
-
-
     print(len(items))
 
 

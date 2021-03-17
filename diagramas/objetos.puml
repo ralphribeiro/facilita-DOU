@@ -1,0 +1,42 @@
+@startuml
+
+allow_mixing
+
+package atual{
+    object payload{
+        path_exists
+        get_payload
+        unpack_payload
+    }
+    object parser_xml{
+        get_bytes_payload
+        parse_and_remove
+        find_in_xml
+    }
+    object main_app{
+        prepare_files
+        get_xml_path
+        main
+    }
+}
+
+package objetivo{
+    object manipulaAPI{
+        login
+        download
+    }
+
+    object manipula_binario{
+        persiste
+        descompacta
+        --
+        abre
+    }
+
+    object retorna_padrao{
+        obtem_dados
+        obtem_padrao
+
+    }
+}
+@enduml
