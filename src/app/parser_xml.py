@@ -6,7 +6,7 @@ from os.path import join as osjoin
 from xml.etree.ElementTree import parse
 
 
-@dataclass()
+@dataclass(frozen=True)
 class ItemXml:
     url: str
     identifica: str
@@ -52,11 +52,11 @@ def parse_xml(xml_file_path: str, pattern: tuple):
 
 
 def get_items(path: str, pattern: tuple):
-    items = []
+    items = set()
     xmls = listdir(path)
     for xml in xmls:
         if xml.endswith('.xml'):
             item = parse_xml(osjoin(path, xml), pattern)
             if item:
-                items.append(item)
+                items.add(item)
     return items

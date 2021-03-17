@@ -18,14 +18,14 @@ def main():
     num_do = 'DO3'
     path = join(td.name, f'{today}-{num_do}.zip')
     url = get_uri(today, num_do)
-
+    
     get_payload(path, url, AUTH)
     unpack_payload(path)
 
-    pattern = ('licitação', 'saúde')
-
+    pattern = ('licitação', 'tecnologia da informação')
     items = get_items(td.name, pattern)
-    print(len(items))
+    for i in items:
+        print(i.identifica, i.url)
 
 
 if __name__ == "__main__":
