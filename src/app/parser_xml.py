@@ -1,9 +1,9 @@
 import re
-from typing import Any
 from dataclasses import dataclass
-from html.parser import HTMLParser
 import logging
-from xml.etree.ElementTree import XMLPullParser, parse, fromstring
+from os import listdir
+from os.path import join as osjoin
+from xml.etree.ElementTree import parse
 
 
 @dataclass()
@@ -49,3 +49,14 @@ def parse_xml(xml_file_path: str, pattern: tuple):
     item = ItemXml(url, identifica, data, texto)
     r = re.findall(pattern[1], item.texto, flags=re.IGNORECASE)
     return item if len(r) > 0 else None
+
+
+def get_items(path: str, pattern: tuple):
+    items = []
+    xmls = listdir(path)
+    for xml in xmls:
+        if xml.endswith('.xml'):
+            item = parse_xml(osjoin(path, xml), pattern)
+            if item:
+                items.append(item)
+    return items
