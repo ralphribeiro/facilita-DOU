@@ -8,6 +8,9 @@ from requests import Session
 from requests.models import HTTPError
 
 
+timeout = 10
+
+
 class GetPayloadError(BaseException):
     ...
 
@@ -31,11 +34,11 @@ def get_payload(path: str, url: str, auth):
     with Session() as s:
         try:
             logging.info('autenticando %s', auth[0])
-            res = s.post(auth[0], data=auth[1])
+            res = s.post(auth[0], data=auth[1], timeout=timeout)
             res.raise_for_status()
             if res.url.split('/')[-1] == 'index.php?p=':
                 logging.info('acessando %s', url)
-                with s.get(url, stream=True) as res:
+                with s.get(url, stream=True, timeout=timeout) as res:
                     res.raise_for_status()
                     logging.info('baixando')
                     with open(path, 'wb') as f:                        
