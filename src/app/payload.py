@@ -11,11 +11,15 @@ from requests.models import HTTPError
 timeout = 10
 
 
-class GetPayloadError(BaseException):
+class GetPayloadError(Exception):
     ...
 
 
-class UnzipFileError(BaseException):
+class UnzipFileError(Exception):
+    ...
+
+
+class AuthError(Exception):
     ...
 
 
@@ -36,20 +40,25 @@ def get_payload(path: str, url: str, auth):
             logging.info('autenticando %s', auth[0])
             res = s.post(auth[0], data=auth[1], timeout=timeout)
             res.raise_for_status()
-            if res.url.split('/')[-1] == 'index.php?p=':
-                logging.info('acessando %s', url)
-                with s.get(url, stream=True, timeout=timeout) as res:
-                    res.raise_for_status()
-                    logging.info('baixando')
-                    with open(path, 'wb') as f:                        
-                        copyfileobj(res.raw, f)
-                        return path
+            
+            if res.url.split('/')[-1] != 'index.php?p=':
+                logging.error('falha na autenticação')
+                raise AuthError('falha na autenticação')
+
+            logging.info('acessando %s', url)
+            with s.get(url, stream=True, timeout=timeout) as res:
+                res.raise_for_status()
+                logging.info('baixando')
+                with open(path, 'wb') as f:
+                    copyfileobj(res.raw, f)
+                    return path
+
         except (HTTPError, ConnectionError) as e:
             logging.error(e.strerror)
-            raise GetPayloadError('Erro HTTP.')
+            raise GetPayloadError('Erro HTTP.') from e
         except (BlockingIOError, UnsupportedOperation) as e:
             logging.error(e.strerror)
-            raise GetPayloadError('Erro no manipulador de arquivo.')
+            raise GetPayloadError('Erro no manipulador de arquivo.') from e
 
 
 def unpack_payload(path: str):
